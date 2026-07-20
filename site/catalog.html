@@ -385,7 +385,9 @@
             var effectiveStatus = r.status;
             if (window.AIFSProgress && r.url) {
               var lp = window.AIFSProgress.extractPath(r.url);
-              if (lp && window.AIFSProgress.isLessonComplete(lp)) effectiveStatus = 'complete';
+              if (lp) {
+                effectiveStatus = window.AIFSProgress.isLessonComplete(lp) ? 'complete' : 'planned';
+              }
             }
             if (statusFilter && effectiveStatus !== statusFilter) return false;
             if (query) {
@@ -443,7 +445,7 @@
             var displayStatus = r.status;
             if (window.AIFSProgress && r.url) {
               var lp2 = window.AIFSProgress.extractPath(r.url);
-              if (lp2 && window.AIFSProgress.isLessonComplete(lp2)) displayStatus = 'complete';
+              if (lp2) displayStatus = window.AIFSProgress.isLessonComplete(lp2) ? 'complete' : 'planned';
             }
             html += '<td><span class="catalog-status-dot ' + displayStatus + '"></span>' + displayStatus + '</td>';
             html += '</tr>';

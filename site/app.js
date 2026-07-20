@@ -56,12 +56,29 @@
           var lp = window.AIFSProgress.extractPath(lessons[j].url);
           if (lp) userDone = window.AIFSProgress.isLessonComplete(lp);
         }
-        if (staticDone || userDone) completeLessons++;
+        // If we have local progress, prefer it (show completed only if user marked it).
+        if (hasProgress && lessons[j].url) {
+          if (userDone) completeLessons++;
+        } else {
+          if (staticDone) completeLessons++;
+        }
       }
     }
     var completePhases = 0;
     for (var p = 0; p < PHASES.length; p++) {
-      if (PHASES[p].status === 'complete') completePhases++;
+      if (hasProgress) {
+        // Consider a phase complete only if every lesson in it is completed by the user.
+        var allDone = true;
+        for (var q = 0; q < PHASES[p].lessons.length; q++) {
+          var L = PHASES[p].lessons[q];
+          var lp2 = window.AIFSProgress && L.url ? window.AIFSProgress.extractPath(L.url) : null;
+          var done = lp2 ? window.AIFSProgress.isLessonComplete(lp2) : (L.status === 'complete');
+          if (!done) { allDone = false; break; }
+        }
+        if (allDone) completePhases++;
+      } else {
+        if (PHASES[p].status === 'complete') completePhases++;
+      }
     }
     return {
       lessons: totalLessons,
@@ -235,7 +252,9 @@
       if (userComplete) userDone++;
 
       var statusClass = l.status.replace(/ /g, '-');
-      if (userComplete) statusClass = 'complete';
+      if (hasProgress && lessonPath) {
+        statusClass = userComplete ? 'complete' : 'planned';
+      }
 
       html += '<div class="modal-lesson' + (userComplete ? ' user-done' : '') + '">';
       html += '<span class="modal-lesson-status ' + statusClass + '"' + (userComplete ? ' title="You completed this lesson"' : '') + '></span>';
@@ -248,7 +267,7 @@
       html += '<span class="modal-lesson-lang">' + escapeHtml(l.lang) + '</span>';
 
       var actionHtml = '';
-      if ((l.status === 'complete' || userComplete) && lessonPath) {
+      if (((hasProgress && userComplete) || (!hasProgress && l.status === 'complete')) && lessonPath) {
         actionHtml = '<a href="lesson.html?path=' + lessonPath + '" class="modal-lesson-read">' + (userComplete ? 'Review' : 'Read') + '</a>';
       }
       var toggleHtml = '';
