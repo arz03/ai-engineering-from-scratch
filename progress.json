@@ -1,0 +1,22 @@
+{
+  "schema": "aifs:progress:v1",
+  "owner": "arz03",
+  "device": "",
+  "lessons": {},
+  "updatedAt": 0,
+  "notes": [
+    "Personal progress state. Lives only on the 'personal/progress' branch.",
+    "Mirrors the same shape site/progress.js stores in localStorage so a",
+    "device can hydrate from this file on load, and any change made on a",
+    "device can be committed back and pushed to the same branch.",
+    "Workflow:",
+    "  1. git checkout personal/progress",
+    "  2. python -m http.server -d site 8000",
+    "  3. open http://localhost:8000/catalog.html  (or lesson.html?path=...)",
+    "  4. click 'Sync' -> 'Pull from progress.json' to load committed state",
+    "  5. take lessons, mark complete, etc.",
+    "  6. click 'Sync' -> 'Export to progress.json' to download a new copy",
+    "  7. overwrite ./progress.json, git add + commit + push",
+    "  8. on the next device: git pull, repeat from step 1"
+  ]
+}
