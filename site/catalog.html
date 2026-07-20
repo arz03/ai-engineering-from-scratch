@@ -381,7 +381,13 @@
 
           var rows = allRows.filter(function (r) {
             if (phaseFilter && String(r.phase) !== phaseFilter) return false;
-            if (statusFilter && r.status !== statusFilter) return false;
+            // Compute effective status by overlaying local progress if available
+            var effectiveStatus = r.status;
+            if (window.AIFSProgress && r.url) {
+              var lp = window.AIFSProgress.extractPath(r.url);
+              if (lp && window.AIFSProgress.isLessonComplete(lp)) effectiveStatus = 'complete';
+            }
+            if (statusFilter && effectiveStatus !== statusFilter) return false;
             if (query) {
               return r.name.toLowerCase().indexOf(query) !== -1 ||
                 r.phaseName.toLowerCase().indexOf(query) !== -1 ||
@@ -433,7 +439,13 @@
             }
             html += '<td>' + escapeHtml(r.type) + '</td>';
             html += '<td><span class="catalog-lang">' + escapeHtml(r.lang) + '</span></td>';
-            html += '<td><span class="catalog-status-dot ' + r.status + '"></span>' + r.status + '</td>';
+            // Show status overlaid with local progress when present
+            var displayStatus = r.status;
+            if (window.AIFSProgress && r.url) {
+              var lp2 = window.AIFSProgress.extractPath(r.url);
+              if (lp2 && window.AIFSProgress.isLessonComplete(lp2)) displayStatus = 'complete';
+            }
+            html += '<td><span class="catalog-status-dot ' + displayStatus + '"></span>' + displayStatus + '</td>';
             html += '</tr>';
           }
           bodyEl.innerHTML = html;
