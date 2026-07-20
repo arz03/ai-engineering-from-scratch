@@ -49,6 +49,85 @@ git push origin personal/progress
 # 5. On the next device: git pull, repeat.
 ```
 
+## Updating ROADMAP.md on this branch
+
+`ROADMAP.md` on `personal/progress` is your own scoreboard. The glyphs
+mirror what you marked complete in the UI. There are two ways to keep it
+in sync; pick one.
+
+### Manual flip (recommended — small, explicit commits)
+
+Open `ROADMAP.md`, find the lesson row, and replace the status cell
+glyph in the **third** column:
+
+| Meaning | Glyph |
+|---|---|
+| Not started | `⬚` |
+| In progress | `🚧` |
+| Complete | `✅` |
+
+Rules from the file header:
+
+- Only edit cells inside a `| # | Title | Status | Est |` table row.
+- Do **not** change the legend line, the phase headers, or the column
+  names. `site/build.js` parses the glyphs and will break if the shape
+  changes.
+- Keep one commit per phase you finish, or per lesson if you want a
+  finer history.
+
+```bash
+# Example: finishing Phase 0 / Lesson 09 — Data Management
+# 1. Edit ROADMAP.md, change "| 09 | Data Management | ⬚ | ~75 min |"
+#    to                  "| 09 | Data Management | ✅ | ~75 min |"
+# 2. Commit + push:
+git add ROADMAP.md
+git commit -m "chore(progress): mark phase 0 lesson 09 complete"
+git push origin personal/progress
+```
+
+### Bulk flip (when starting from a clean fork)
+
+If you want to start with everything unchecked, run this once. It flips
+only the 4-cell table rows; phase headers and the legend stay intact.
+
+```bash
+py -c "
+import pathlib
+p = pathlib.Path('ROADMAP.md')
+src = p.read_text(encoding='utf-8')
+new_lines = []
+for line in src.splitlines(keepends=True):
+    s = line.lstrip()
+    if s.startswith('|') and s.count('|') >= 4:
+        cells = [c.strip() for c in s.split('|')[1:-1]]
+        if len(cells) == 4 and cells[2] == '\u2705':
+            lead = line[:len(line)-len(s)]
+            new_lines.append(lead + '| ' + ' | '.join([cells[0], cells[1], '\u2b1a', cells[3]]) + ' |\n')
+            continue
+    new_lines.append(line)
+p.write_text(''.join(new_lines), encoding='utf-8')
+"
+```
+
+Reverse the direction by swapping the source and target glyphs.
+
+### Footer caveat
+
+The bottom-of-file `Total: ... | N complete | ...` line is **not** part
+of the upstream release. It exists only as a fork snapshot. When
+`personal/progress` drifts from upstream counts (e.g. upstream adds a
+lesson, you finish several), just hand-edit that line or regenerate it:
+
+```bash
+py scripts/check_readme_counts.py --fix
+git add ROADMAP.md
+git commit -m "chore(progress): refresh footer counts"
+```
+
+> `personal/progress` is yours only. None of this touches `main`, so
+> `main` stays a clean mirror of `rohitg00/ai-engineering-from-scratch`
+> and can be rebased from `upstream/main` without conflict.
+
 ## Syncing with upstream
 
 Do this on `main`, never on `personal/progress`:
