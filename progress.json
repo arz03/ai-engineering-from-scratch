@@ -1,6 +1,6 @@
 {
   "schema": "aifs:progress:v1",
-  "exportedAt": "2026-07-21T11:16:00.321Z",
+  "exportedAt": "2026-07-21T12:33:42.839Z",
   "lessons": {
     "phases/00-setup-and-tooling/01-dev-environment": {
       "answers": {
@@ -13,10 +13,25 @@
           "picked": 2,
           "correct": true,
           "t": 1784632560321
+        },
+        "post-q0": {
+          "picked": 3,
+          "correct": true,
+          "t": 1784637215765
+        },
+        "post-q1": {
+          "picked": 1,
+          "correct": true,
+          "t": 1784637218734
+        },
+        "post-q2": {
+          "picked": 2,
+          "correct": true,
+          "t": 1784637220558
         }
       },
-      "completedAt": null,
-      "visitedAt": 1784632385051
+      "completedAt": 1784637220562,
+      "visitedAt": 1784637179659
     },
     "phases/00-setup-and-tooling/02-git-and-collaboration": {
       "answers": {},
@@ -24,5 +39,5 @@
       "visitedAt": 1784631890927
     }
   },
-  "updatedAt": 1784632560321
+  "updatedAt": 1784637220562
 }
