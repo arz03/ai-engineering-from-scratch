@@ -1,6 +1,28 @@
 {
   "schema": "aifs:progress:v1",
-  "exportedAt": "2026-07-21T10:58:33.376Z",
-  "lessons": {},
-  "updatedAt": 1784631512373
+  "exportedAt": "2026-07-21T11:16:00.321Z",
+  "lessons": {
+    "phases/00-setup-and-tooling/01-dev-environment": {
+      "answers": {
+        "pre-q0": {
+          "picked": 1,
+          "correct": true,
+          "t": 1784632533050
+        },
+        "pre-q1": {
+          "picked": 2,
+          "correct": true,
+          "t": 1784632560321
+        }
+      },
+      "completedAt": null,
+      "visitedAt": 1784632385051
+    },
+    "phases/00-setup-and-tooling/02-git-and-collaboration": {
+      "answers": {},
+      "completedAt": null,
+      "visitedAt": 1784631890927
+    }
+  },
+  "updatedAt": 1784632560321
 }
