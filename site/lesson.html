@@ -1853,11 +1853,21 @@
       }
 
       function fetchLesson(path) {
-        // Fetch docs from the branch this site was built from (set by build.js
-        // via build-meta.js), so PR preview deploys render their own lesson
-        // edits instead of always pulling main. Falls back to main.
+        // Fetch docs from the branch + repo configured for this build
+        // (set by build.js via build-meta.js), so PR preview deploys and
+        // forks render their own lesson edits instead of always pulling
+        // upstream main. Forked sites can override at runtime via the
+        // localStorage keys 'aifs:repo' (e.g. 'arz03/ai-engineering-from-scratch')
+        // and 'aifs:ref' (branch name). Defaults to upstream main.
         var ref = (typeof window !== 'undefined' && window.__AIFS_REF) ? window.__AIFS_REF : 'main';
-        var base = 'https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/' + ref + '/';
+        var repo = (typeof window !== 'undefined' && window.__AIFS_REPO) ? window.__AIFS_REPO : 'rohitg00/ai-engineering-from-scratch';
+        try {
+          var lsRepo = localStorage.getItem('aifs:repo');
+          var lsRef = localStorage.getItem('aifs:ref');
+          if (lsRepo) repo = lsRepo;
+          if (lsRef) ref = lsRef;
+        } catch (_) {}
+        var base = 'https://raw.githubusercontent.com/' + repo + '/' + ref + '/';
         var rawUrl = base + path + '/docs/en.md';
         var quizUrl = base + path + '/quiz.json';
 
