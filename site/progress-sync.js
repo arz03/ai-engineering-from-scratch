@@ -1,28 +1,16 @@
 /**
  * Personal progress sync for ai-engineering-from-scratch (forked).
  *
- * The live site at aiengineeringfromscratch.com cannot be modified, and the
- * upstream repo's localStorage-only progress.js does not travel across
- * devices. This module lets a fork owner:
- *
- *   - Pull committed progress from /progress.json into localStorage
- *     (run the site locally, click "Sync" -> "Pull from progress.json")
- *   - Export the current localStorage blob to /progress.json
- *     (click "Sync" -> "Export to progress.json" -> a download is offered
- *      that you then commit on the personal/progress branch and push)
- *
- * Why two steps instead of an auto-commit? Browser fetch() cannot write to
- * the repo. The export step produces a file the user commits by hand, which
- * keeps secrets out of the browser and avoids needing a GitHub token in
- * localStorage.
- *
- * Loaded only when serving the site locally (open the page via the same
- * server that serves /progress.json). It is a no-op on the live upstream
- * site because progress-sync.js is not referenced from there.
+ * Automatically syncs local progress with progress.json across devices.
+ * Features:
+ *   - Auto-pulls progress from progress.json on page load.
+ *   - Auto-saves changes to progress.json via POST /api/progress when running scripts/serve.py.
+ *   - Fallback Export button to download progress.json when using a standard static server.
  */
 (function () {
   var STORAGE_KEY = 'aifs:progress:v1';
-  var PROGRESS_PATH = '../progress.json'; // site/* served at /site/*, json at /progress.json
+  var PATH_CANDIDATES = ['/progress.json', '../progress.json', './progress.json', 'progress.json'];
+  var API_ENDPOINTS = ['/api/progress', '/site/api/progress'];
 
   function read() {
     try {
@@ -46,9 +34,6 @@
   }
 
   function mergePreferIncoming(localState, remoteState) {
-    // Per-lesson merge: keep whichever completedAt is later, union the
-    // answer history. This way two devices editing different lessons do
-    // not stomp each other.
     var out = { lessons: {}, updatedAt: Date.now() };
     var keys = {};
     Object.keys(localState.lessons || {}).forEach(function (k) { keys[k] = 1; });
@@ -69,22 +54,52 @@
     return out;
   }
 
-  function pullFromFile() {
-    return fetch(PROGRESS_PATH, { cache: 'no-store' })
+  function tryFetchFirst(paths, idx) {
+    if (idx >= paths.length) return Promise.reject(new Error('progress.json not found'));
+    return fetch(paths[idx], { cache: 'no-store' })
       .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
+        if (!r.ok) return tryFetchFirst(paths, idx + 1);
         return r.json();
       })
+      .catch(function () {
+        return tryFetchFirst(paths, idx + 1);
+      });
+  }
+
+  function pullFromFile() {
+    return tryFetchFirst(PATH_CANDIDATES, 0)
       .then(function (remote) {
         var local = read();
         var merged = mergePreferIncoming(local, remote);
         write(merged);
-        if (window.AIFSProgress && window.AIFSProgress.onChange) {
-          // AIFSProgress.onChange is a list; fire one to refresh listeners.
-          window.AIFSProgress.totalCompleted();
-        }
+        notifyProgressLoaded(merged);
         return merged;
       });
+  }
+
+  function trySaveToApi(endpoints, idx, payload) {
+    if (idx >= endpoints.length) return Promise.reject(new Error('No API endpoint available'));
+    return fetch(endpoints[idx], {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      if (!r.ok) return trySaveToApi(endpoints, idx + 1, payload);
+      return r.json();
+    }).catch(function () {
+      return trySaveToApi(endpoints, idx + 1, payload);
+    });
+  }
+
+  function saveProgress() {
+    var state = read();
+    var payload = {
+      schema: 'aifs:progress:v1',
+      exportedAt: new Date().toISOString(),
+      lessons: state.lessons,
+      updatedAt: state.updatedAt || Date.now(),
+    };
+    return trySaveToApi(API_ENDPOINTS, 0, payload);
   }
 
   function exportToFile() {
@@ -93,7 +108,7 @@
       schema: 'aifs:progress:v1',
       exportedAt: new Date().toISOString(),
       lessons: state.lessons,
-      updatedAt: state.updatedAt,
+      updatedAt: state.updatedAt || Date.now(),
     };
     var json = JSON.stringify(payload, null, 2);
     var blob = new Blob([json], { type: 'application/json' });
@@ -107,6 +122,13 @@
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }, 100);
+  }
+
+  function notifyProgressLoaded(state) {
+    if (window.AIFSProgress && typeof window.AIFSProgress.totalCompleted === 'function') {
+      window.AIFSProgress.totalCompleted();
+    }
+    window.dispatchEvent(new CustomEvent('aifs:progress:loaded', { detail: state }));
   }
 
   function mountUI() {
@@ -124,7 +146,7 @@
     bar.innerHTML =
       '<span style="opacity:.7">progress</span>' +
       '<button data-act="pull" style="all:unset;cursor:pointer;padding:4px 8px;border:1px solid #3553ff">Pull</button>' +
-      '<button data-act="export" style="all:unset;cursor:pointer;padding:4px 8px;border:1px solid #3553ff">Export</button>' +
+      '<button data-act="save" style="all:unset;cursor:pointer;padding:4px 8px;border:1px solid #3553ff">Sync/Save</button>' +
       '<span data-role="msg" style="opacity:.6;margin-left:4px"></span>';
     document.body.appendChild(bar);
     bar.addEventListener('click', function (e) {
@@ -141,19 +163,35 @@
             }).length;
             msg.textContent = 'merged. ' + n + ' done.';
             setTimeout(function () { msg.textContent = ''; }, 3000);
-            // Notify any page (catalog/lesson) that listens.
-            window.dispatchEvent(new CustomEvent('aifs:progress:loaded', { detail: m }));
           })
           .catch(function (err) {
-            msg.textContent = 'pull failed: ' + err.message + ' (serve the repo root, not /site)';
+            msg.textContent = 'pull failed: ' + err.message;
             setTimeout(function () { msg.textContent = ''; }, 6000);
           });
-      } else if (act === 'export') {
-        exportToFile();
-        msg.textContent = 'downloaded progress.json -> commit on personal/progress';
-        setTimeout(function () { msg.textContent = ''; }, 5000);
+      } else if (act === 'save') {
+        msg.textContent = 'saving...';
+        saveProgress()
+          .then(function () {
+            msg.textContent = 'saved to progress.json!';
+            setTimeout(function () { msg.textContent = ''; }, 3000);
+          })
+          .catch(function () {
+            exportToFile();
+            msg.textContent = 'exported progress.json (commit & push)';
+            setTimeout(function () { msg.textContent = ''; }, 5000);
+          });
       }
     });
+
+    // Auto-pull on load
+    pullFromFile().catch(function () {});
+
+    // Listen to local progress changes and auto-save if API is present
+    if (window.AIFSProgress && typeof window.AIFSProgress.onChange === 'function') {
+      window.AIFSProgress.onChange(function () {
+        saveProgress().catch(function () {});
+      });
+    }
   }
 
   if (document.readyState === 'loading') {
@@ -164,6 +202,7 @@
 
   window.AIFSProgressSync = {
     pull: pullFromFile,
+    save: saveProgress,
     exportNow: exportToFile,
     merge: mergePreferIncoming,
   };

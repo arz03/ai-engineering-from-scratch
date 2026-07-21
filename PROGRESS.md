@@ -10,8 +10,8 @@ while keeping one source of truth.
 
 | Branch | Purpose | Push to? |
 |---|---|---|
-| `main` | Clean mirror of `rohitg00/ai-engineering-from-scratch`. Rebased from `upstream/main` periodically. | `origin/main` (your fork) |
-| `personal/progress` | Your `progress.json` and the small `site/progress-sync.js` patch. **Never merged into `main`.** | `origin/personal/progress` only |
+| `main` | Clean mirror of `rohitg00/ai-engineering-from-scratch`. Synced with `upstream/main` periodically. | `origin/main` (your fork) |
+| `personal/progress` | Your `progress.json` and the `site/progress-sync.js` patch. **Never merged into `main`.** | `origin/personal/progress` only |
 
 > The sync UI is served by `personal/progress`'s `site/progress-sync.js`.
 > It only works when you run the site from this branch locally.
@@ -26,34 +26,54 @@ git fetch upstream
 git checkout personal/progress
 ```
 
-## Daily use
+## Daily use (Recommended Workflow)
 
 ```bash
-# 1. Always serve the repo root, not the site/ directory, so /progress.json resolves.
-python -m http.server 8000
+# 1. Run the local dev server (auto-pulls & auto-saves progress.json in real time)
+python scripts/serve.py
 # -> http://localhost:8000/site/catalog.html
-# -> http://localhost:8000/site/lesson.html?path=phases/00-setup-and-tooling/01-dev-environment
+# -> http://localhost:8000/site/prereqs.html
 
-# 2. On a fresh device, click the floating "Pull" button in the bottom-right.
-#    This merges ../progress.json into localStorage.
+# 2. Open catalog or roadmap. Your progress automatically hydrates on load.
 
-# 3. Take a lesson. The site marks it complete in localStorage as normal.
+# 3. Take lessons and complete quizzes in lesson.html.
+#    Progress automatically auto-saves directly to progress.json!
 
-# 4. Click "Export" to download an updated progress.json. Overwrite the one
-#    in the repo and commit + push:
-mv ~/Downloads/progress.json ./progress.json
+# 4. Before switching devices, commit & push progress.json:
 git add progress.json
-git commit -m "chore(progress): update after phase 0 lessons"
+git commit -m "chore(progress): update lesson progress"
 git push origin personal/progress
 
-# 5. On the next device: git pull, repeat.
+# 5. On the next device: git pull, run python scripts/serve.py, repeat.
+```
+
+### Static Server Fallback (Optional)
+
+If running a generic static server without `scripts/serve.py` (e.g. `python -m http.server 8000`):
+- Click **Pull** in the bottom-right sync bar to hydrate from `progress.json`.
+- Click **Sync/Save** to download an updated `progress.json` to your Downloads folder, then move it to the project root and commit.
+
+## Syncing with upstream (Main Repo Updates)
+
+Keep your fork up-to-date with new upstream lessons from `rohitg00/ai-engineering-from-scratch`:
+
+```bash
+# 1. Update main branch from upstream
+git checkout main
+git fetch upstream
+git pull upstream main
+git push origin main
+
+# 2. Merge main updates into your personal progress branch
+git checkout personal/progress
+git merge main
+git push origin personal/progress
 ```
 
 ## Updating ROADMAP.md on this branch
 
 `ROADMAP.md` on `personal/progress` is your own scoreboard. The glyphs
-mirror what you marked complete in the UI. There are two ways to keep it
-in sync; pick one.
+mirror what you marked complete in the UI.
 
 ### Manual flip (recommended — small, explicit commits)
 
@@ -66,20 +86,7 @@ glyph in the **third** column:
 | In progress | `🚧` |
 | Complete | `✅` |
 
-Rules from the file header:
-
-- Only edit cells inside a `| # | Title | Status | Est |` table row.
-- Do **not** change the legend line, the phase headers, or the column
-  names. `site/build.js` parses the glyphs and will break if the shape
-  changes.
-- Keep one commit per phase you finish, or per lesson if you want a
-  finer history.
-
 ```bash
-# Example: finishing Phase 0 / Lesson 09 — Data Management
-# 1. Edit ROADMAP.md, change "| 09 | Data Management | ⬚ | ~75 min |"
-#    to                  "| 09 | Data Management | ✅ | ~75 min |"
-# 2. Commit + push:
 git add ROADMAP.md
 git commit -m "chore(progress): mark phase 0 lesson 09 complete"
 git push origin personal/progress
@@ -87,11 +94,10 @@ git push origin personal/progress
 
 ### Bulk flip (when starting from a clean fork)
 
-If you want to start with everything unchecked, run this once. It flips
-only the 4-cell table rows; phase headers and the legend stay intact.
+If you want to start with everything unchecked, run this once:
 
 ```bash
-py -c "
+python -c "
 import pathlib
 p = pathlib.Path('ROADMAP.md')
 src = p.read_text(encoding='utf-8')
@@ -109,63 +115,9 @@ p.write_text(''.join(new_lines), encoding='utf-8')
 "
 ```
 
-Reverse the direction by swapping the source and target glyphs.
-
-### Footer caveat
-
-The bottom-of-file `Total: ... | N complete | ...` line is **not** part
-of the upstream release. It exists only as a fork snapshot. When
-`personal/progress` drifts from upstream counts (e.g. upstream adds a
-lesson, you finish several), just hand-edit that line or regenerate it:
-
-```bash
-py scripts/check_readme_counts.py --fix
-git add ROADMAP.md
-git commit -m "chore(progress): refresh footer counts"
-```
-
-> `personal/progress` is yours only. None of this touches `main`, so
-> `main` stays a clean mirror of `rohitg00/ai-engineering-from-scratch`
-> and can be rebased from `upstream/main` without conflict.
-
-## Syncing with upstream
-
-Do this on `main`, never on `personal/progress`:
-
-```bash
-git checkout main
-git fetch upstream
-git rebase upstream/main          # or: git merge upstream/main
-# If site/data.js or README.md conflict (per AGENTS.md):
-git checkout --theirs site/data.js
-node site/build.js
-git add site/data.js
-python3 scripts/build_catalog.py
-python3 scripts/check_readme_counts.py --fix
-git add README.md
-git commit --no-edit
-git push origin main
-```
-
-`personal/progress` does not need to rebase — it is just a 1-file branch
-plus the sync module. After an upstream sync you can rebase it onto the
-new `main` if you want, but it is not required because `main` does not
-read `progress.json`.
-
 ## Conflict policy
 
 `progress.json` is a personal file. If two devices edit it offline and
 both push, last-write-wins on the file, and the per-lesson merge in
-`site/progress-sync.js` reconciles on the next "Pull" anyway. Keep
+`site/progress-sync.js` reconciles on the next load anyway. Keep
 changes small and commit often to avoid divergence.
-
-## Removing this from your fork
-
-If you want to stop syncing, just delete the branch:
-
-```bash
-git push origin --delete personal/progress
-git branch -D personal/progress
-```
-
-The `main` branch is unaffected.

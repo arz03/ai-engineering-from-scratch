@@ -20,6 +20,11 @@
     initSmoothScroll();
     initFadeObserver();
     initScrollExplode();
+
+    window.addEventListener('aifs:progress:loaded', populateStats);
+    if (window.AIFSProgress && typeof window.AIFSProgress.onChange === 'function') {
+      window.AIFSProgress.onChange(populateStats);
+    }
   });
 
   function updateThemeIcon() {

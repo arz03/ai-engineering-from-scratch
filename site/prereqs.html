@@ -472,6 +472,7 @@
 
   <script src="data.js?v=20260525a"></script>
   <script src="progress.js?v=20260525a"></script>
+  <script src="progress-sync.js?v=20260525a" defer></script>
   <script src="header.js?v=20260525a" defer></script>
   <script src="cmdpalette.js?v=20260525a" defer></script>
   <script>
@@ -725,11 +726,26 @@
       return '#807060';
     }
 
+    function phaseEffectiveStatus(phase) {
+      var stats = lessonStats(phase);
+      if (stats.total > 0 && stats.done === stats.total) return 'complete';
+      if (stats.done > 0) return 'in-progress';
+      return 'planned';
+    }
+
     function lessonStats(phase) {
       var done = 0;
       var lessons = Array.isArray(phase.lessons) ? phase.lessons : [];
       for (var j = 0; j < lessons.length; j++) {
-        if (lessons[j].status === 'complete') done++;
+        var l = lessons[j];
+        var isDone = false;
+        if (window.AIFSProgress && l.url) {
+          var lp = window.AIFSProgress.extractPath(l.url);
+          if (lp) isDone = window.AIFSProgress.isLessonComplete(lp);
+        } else {
+          isDone = l.status === 'complete';
+        }
+        if (isDone) done++;
       }
       return { done: done, total: lessons.length };
     }
@@ -800,7 +816,7 @@
         g.appendChild(svgEl('rect', {
           class: 'node-status-bar',
           x: 8, y: 0, width: NODE_W - 16, height: 3, rx: 1.5,
-          fill: statusColor(phase.status)
+          fill: statusColor(phaseEffectiveStatus(phase))
         }));
 
         /* Label content */
@@ -984,11 +1000,12 @@
 
       var ancestorCount   = Object.keys(ancestors).length;
       var descendantCount = Object.keys(descendants).length;
+      var pStatus         = phaseEffectiveStatus(phase);
 
       panel.innerHTML =
         '<div class="detail-top">' +
           '<span class="detail-phase-num">Phase ' + String(id).padStart(2, '0') + '</span>' +
-          '<span class="detail-status ' + phase.status + '">' + phase.status.replace('-', ' ') + '</span>' +
+          '<span class="detail-status ' + pStatus + '">' + pStatus.replace('-', ' ') + '</span>' +
         '</div>' +
         '<div class="detail-title">' + escapeHtml(phase.name) + '</div>' +
         '<div class="detail-desc">' + escapeHtml(phase.desc) + '</div>' +
@@ -1030,6 +1047,25 @@
       }
 
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function refreshGraph() {
+      var svg = document.getElementById('graphSvg');
+      if (svg) svg.innerHTML = '';
+      nodeEls = {};
+      edgePathEls = [];
+      edgeArrowEls = [];
+      buildGraph();
+      if (selectedId) {
+        var ancestors = getAncestors(selectedId);
+        var descendants = getDescendants(selectedId);
+        showDetail(selectedId, ancestors, descendants);
+      }
+    }
+
+    window.addEventListener('aifs:progress:loaded', refreshGraph);
+    if (window.AIFSProgress && typeof window.AIFSProgress.onChange === 'function') {
+      window.AIFSProgress.onChange(refreshGraph);
     }
   })();
   </script>

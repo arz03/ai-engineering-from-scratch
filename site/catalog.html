@@ -370,8 +370,18 @@
 
         function escapeHtml(str) {
           var div = document.createElement('div');
-          div.textContent = str;
+          div.textContent = str == null ? '' : str;
           return div.innerHTML;
+        }
+
+        function getEffectiveStatus(r) {
+          if (window.AIFSProgress && r.url) {
+            var lp = window.AIFSProgress.extractPath(r.url);
+            if (lp) {
+              return window.AIFSProgress.isLessonComplete(lp) ? 'complete' : 'planned';
+            }
+          }
+          return r.status;
         }
 
         function render() {
@@ -381,14 +391,7 @@
 
           var rows = allRows.filter(function (r) {
             if (phaseFilter && String(r.phase) !== phaseFilter) return false;
-            // Compute effective status by overlaying local progress if available
-            var effectiveStatus = r.status;
-            if (window.AIFSProgress && r.url) {
-              var lp = window.AIFSProgress.extractPath(r.url);
-              if (lp) {
-                effectiveStatus = window.AIFSProgress.isLessonComplete(lp) ? 'complete' : 'planned';
-              }
-            }
+            var effectiveStatus = getEffectiveStatus(r);
             if (statusFilter && effectiveStatus !== statusFilter) return false;
             if (query) {
               return r.name.toLowerCase().indexOf(query) !== -1 ||
@@ -414,8 +417,8 @@
               va = a.lang.toLowerCase();
               vb = b.lang.toLowerCase();
             } else if (sortCol === 'status') {
-              va = a.status;
-              vb = b.status;
+              va = getEffectiveStatus(a);
+              vb = getEffectiveStatus(b);
             }
             if (va < vb) return -1 * sortDir;
             if (va > vb) return 1 * sortDir;
@@ -432,21 +435,20 @@
           var html = '';
           for (var i = 0; i < rows.length; i++) {
             var r = rows[i];
+            var lp = window.AIFSProgress && r.url ? window.AIFSProgress.extractPath(r.url) : '';
+            var displayStatus = getEffectiveStatus(r);
+
             html += '<tr>';
             html += '<td><span class="catalog-phase-label">' + String(r.phase).padStart(2, '0') + '</span></td>';
-            if (r.url) {
+            if (lp) {
+              html += '<td><a href="lesson.html?path=' + encodeURIComponent(lp) + '">' + escapeHtml(r.name) + '</a></td>';
+            } else if (r.url) {
               html += '<td><a href="' + r.url + '" target="_blank" rel="noopener">' + escapeHtml(r.name) + '</a></td>';
             } else {
               html += '<td>' + escapeHtml(r.name) + '</td>';
             }
             html += '<td>' + escapeHtml(r.type) + '</td>';
             html += '<td><span class="catalog-lang">' + escapeHtml(r.lang) + '</span></td>';
-            // Show status overlaid with local progress when present
-            var displayStatus = r.status;
-            if (window.AIFSProgress && r.url) {
-              var lp2 = window.AIFSProgress.extractPath(r.url);
-              if (lp2) displayStatus = window.AIFSProgress.isLessonComplete(lp2) ? 'complete' : 'planned';
-            }
             html += '<td><span class="catalog-status-dot ' + displayStatus + '"></span>' + displayStatus + '</td>';
             html += '</tr>';
           }
@@ -463,6 +465,11 @@
         searchInput.addEventListener('input', render);
         phaseSelect.addEventListener('change', render);
         statusSelect.addEventListener('change', render);
+
+        window.addEventListener('aifs:progress:loaded', render);
+        if (window.AIFSProgress && typeof window.AIFSProgress.onChange === 'function') {
+          window.AIFSProgress.onChange(render);
+        }
 
         document.querySelectorAll('.catalog-table th[data-sort]').forEach(function (th) {
           th.addEventListener('click', function () {
