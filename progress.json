@@ -1,38 +1,7 @@
 {
   "schema": "aifs:progress:v1",
-  "exportedAt": "2026-08-09T12:44:52.723Z",
+  "exportedAt": "2026-08-09T15:45:01.483Z",
   "lessons": {
-    "phases/00-setup-and-tooling/02-git-and-collaboration": {
-      "answers": {
-        "pre-q0": {
-          "picked": 1,
-          "correct": true,
-          "t": 1786277615096
-        },
-        "pre-q1": {
-          "picked": 1,
-          "correct": true,
-          "t": 1786277635231
-        },
-        "post-q0": {
-          "picked": 2,
-          "correct": true,
-          "t": 1786277835074
-        },
-        "post-q1": {
-          "picked": 1,
-          "correct": true,
-          "t": 1786277846066
-        },
-        "post-q2": {
-          "picked": 1,
-          "correct": true,
-          "t": 1786277871074
-        }
-      },
-      "completedAt": 1786277871076,
-      "visitedAt": 1786279405238
-    },
     "phases/00-setup-and-tooling/01-dev-environment": {
       "answers": {
         "pre-q0": {
@@ -64,6 +33,37 @@
       "completedAt": 1784637220562,
       "visitedAt": 1786277539342
     },
+    "phases/00-setup-and-tooling/02-git-and-collaboration": {
+      "answers": {
+        "pre-q0": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277615096
+        },
+        "pre-q1": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277635231
+        },
+        "post-q0": {
+          "picked": 2,
+          "correct": true,
+          "t": 1786277835074
+        },
+        "post-q1": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277846066
+        },
+        "post-q2": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277871074
+        }
+      },
+      "completedAt": 1786277871076,
+      "visitedAt": 1786279863377
+    },
     "phases/00-setup-and-tooling/03-gpu-setup-and-cloud": {
       "answers": {
         "pre-q0": {
@@ -85,11 +85,47 @@
           "picked": 1,
           "correct": true,
           "t": 1786279466170
+        },
+        "post-q2": {
+          "picked": 3,
+          "correct": false,
+          "t": 1786279914833
         }
       },
       "completedAt": null,
-      "visitedAt": 1786279486292
+      "visitedAt": 1786279898626
+    },
+    "phases/00-setup-and-tooling/04-apis-and-keys": {
+      "answers": {
+        "pre-q0": {
+          "picked": 0,
+          "correct": false,
+          "t": 1786281424512
+        },
+        "pre-q1": {
+          "picked": 3,
+          "correct": true,
+          "t": 1786281654575
+        },
+        "post-q0": {
+          "picked": 0,
+          "correct": true,
+          "t": 1786283522228
+        },
+        "post-q1": {
+          "picked": 3,
+          "correct": true,
+          "t": 1786283558729
+        },
+        "post-q2": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786283577049
+        }
+      },
+      "completedAt": null,
+      "visitedAt": 1786281614563
     }
   },
-  "updatedAt": 1786279486379
+  "updatedAt": 1786283577049
 }
