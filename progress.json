@@ -1,7 +1,38 @@
 {
   "schema": "aifs:progress:v1",
-  "exportedAt": "2026-07-21T12:33:42.839Z",
+  "exportedAt": "2026-08-09T12:44:52.723Z",
   "lessons": {
+    "phases/00-setup-and-tooling/02-git-and-collaboration": {
+      "answers": {
+        "pre-q0": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277615096
+        },
+        "pre-q1": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277635231
+        },
+        "post-q0": {
+          "picked": 2,
+          "correct": true,
+          "t": 1786277835074
+        },
+        "post-q1": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277846066
+        },
+        "post-q2": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277871074
+        }
+      },
+      "completedAt": 1786277871076,
+      "visitedAt": 1786279405238
+    },
     "phases/00-setup-and-tooling/01-dev-environment": {
       "answers": {
         "pre-q0": {
@@ -31,13 +62,34 @@
         }
       },
       "completedAt": 1784637220562,
-      "visitedAt": 1784637179659
+      "visitedAt": 1786277539342
     },
-    "phases/00-setup-and-tooling/02-git-and-collaboration": {
-      "answers": {},
+    "phases/00-setup-and-tooling/03-gpu-setup-and-cloud": {
+      "answers": {
+        "pre-q0": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786278088149
+        },
+        "pre-q1": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786278103237
+        },
+        "post-q0": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786278686998
+        },
+        "post-q1": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786279466170
+        }
+      },
       "completedAt": null,
-      "visitedAt": 1784631890927
+      "visitedAt": 1786279486292
     }
   },
-  "updatedAt": 1784637220562
+  "updatedAt": 1786279486379
 }
