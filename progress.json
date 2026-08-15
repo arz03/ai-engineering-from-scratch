@@ -1,6 +1,6 @@
 {
   "schema": "aifs:progress:v1",
-  "exportedAt": "2026-08-09T15:45:01.483Z",
+  "exportedAt": "2026-08-15T13:53:24.638Z",
   "lessons": {
     "phases/00-setup-and-tooling/01-dev-environment": {
       "answers": {
@@ -124,8 +124,8 @@
         }
       },
       "completedAt": null,
-      "visitedAt": 1786281614563
+      "visitedAt": 1786356140421
     }
   },
-  "updatedAt": 1786283577049
+  "updatedAt": 1786802004625
 }
