@@ -63,3 +63,7 @@ catalog.json
 site/sitemap.xml
 site/llms.txt
 site/build-meta.js
+
+# Local `learn` wrapper artifacts (server log + pid file)
+.learn-server.log
+.learn-server.pid
