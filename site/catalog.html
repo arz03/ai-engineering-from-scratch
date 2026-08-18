@@ -503,6 +503,11 @@ if (r.url) {
         }
 
         function applySort(th) {
+            var col = th.getAttribute('data-sort');
+            if (sortCol === col) {
+              sortDir = sortDir * -1;
+            } else {
+              sortCol = col;
               sortDir = 1;
             }
             document.querySelectorAll('.catalog-table th[data-sort]').forEach(function (header) {
