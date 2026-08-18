@@ -5,396 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Roadmap - AI Engineering from Scratch</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23fafaf5'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%233553ff' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%233553ff'>AI</text></svg>">
-  <meta name="description" content="Interactive prerequisite map for 503 AI engineering lessons. See which phases depend on which, and plan your learning path.">
+  <meta name="description" content="Interactive learning roadmap for 503 AI engineering lessons across 20 connected phases. Trace prerequisites, see what each phase unlocks, and continue from your local progress.">
   <link rel="canonical" href="https://aiengineeringfromscratch.com/prereqs.html">
   <meta property="og:title" content="Roadmap · AI Engineering from Scratch">
-  <meta property="og:description" content="Interactive prerequisite map. See what each phase depends on and what it unlocks downstream.">
+  <meta property="og:description" content="Trace every prerequisite, find your next phase, and move from first principles to production AI.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <meta property="og:url" content="https://aiengineeringfromscratch.com/prereqs.html">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Roadmap · AI Engineering from Scratch">
-  <meta name="twitter:description" content="Interactive prerequisite map across 20 phases.">
+  <meta name="twitter:description" content="An interactive learning map across 20 connected phases.">
   <meta name="twitter:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260525a">
-  <style>
-    /* ===================================================
-       Learning Path — Page Styles
-    =================================================== */
-
-    .prereqs-page {
-      padding: 100px 0 80px;
-      min-height: 100vh;
-    }
-
-    .prereqs-header {
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .prereqs-header h1 {
-      font-size: clamp(2rem, 5vw, 3rem);
-      margin-bottom: 8px;
-    }
-
-    .prereqs-header p {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-      max-width: 520px;
-      margin: 0 auto;
-    }
-
-    /* --- Controls bar --- */
-    .prereqs-controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 24px;
-      flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
-
-    .prereqs-legend {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .legend-dot.complete    { background: var(--complete); }
-    .legend-dot.in-progress { background: var(--accent); }
-    .legend-dot.planned     { background: var(--planned); }
-
-    .reset-btn {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      padding: 6px 14px;
-      background: var(--bg-surface);
-      border: 2px solid var(--border);
-      border-radius: 0;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-      display: none;
-    }
-
-    .reset-btn.visible { display: inline-block; }
-
-    .reset-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* --- Graph container --- */
-    .graph-wrap {
-      overflow-x: auto;
-      overflow-y: visible;
-      -webkit-overflow-scrolling: touch;
-      padding: 8px 0 24px;
-      margin: 0 -24px;
-      position: relative;
-    }
-
-    .graph-scroll-hint {
-      display: none;
-      text-align: center;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      opacity: 0.7;
-    }
-
-    .graph-container {
-      position: relative;
-      margin: 0 auto;
-    }
-
-    .graph-svg { display: block; }
-
-    /* --- SVG Node styles --- */
-    .node-group { cursor: pointer; }
-
-    .node-rect {
-      fill: var(--bg-surface);
-      stroke: var(--border);
-      stroke-width: 2;
-      rx: 12;
-      transition: fill 0.25s, stroke 0.25s, filter 0.25s;
-    }
-
-    .node-group:hover .node-rect {
-      fill: var(--bg-surface-hover);
-      stroke: var(--accent);
-    }
-
-    .node-group.selected .node-rect {
-      stroke: var(--accent);
-      stroke-width: 3;
-      filter: drop-shadow(0 0 12px rgba(255, 107, 107, 0.4));
-    }
-
-    .node-group.ancestor .node-rect {
-      stroke: var(--accent);
-      stroke-width: 2.5;
-      filter: drop-shadow(0 0 6px rgba(255, 107, 107, 0.25));
-    }
-
-    .node-group.descendant .node-rect {
-      stroke: var(--complete);
-      stroke-width: 2.5;
-      filter: drop-shadow(0 0 6px rgba(90, 184, 143, 0.25));
-    }
-
-    .node-group.dimmed .node-rect,
-    .node-group.dimmed .node-id,
-    .node-group.dimmed .node-name,
-    .node-group.dimmed .node-status-bar {
-      opacity: 0.25;
-    }
-
-    .node-status-bar { transition: opacity 0.25s; }
-
-    .node-id {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      font-weight: 700;
-      fill: var(--accent);
-      transition: opacity 0.25s;
-    }
-
-    .node-name {
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 400;
-      fill: var(--ink);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      transition: opacity 0.25s;
-    }
-
-    /* --- SVG Edge styles --- */
-    .edge-path {
-      fill: none;
-      stroke: var(--border);
-      stroke-width: 1.8;
-      opacity: 0.45;
-      transition: stroke 0.3s, opacity 0.3s, stroke-width 0.3s;
-    }
-
-    .edge-path.ancestor-edge   { stroke: var(--accent);   opacity: 0.9; stroke-width: 2.5; }
-    .edge-path.descendant-edge { stroke: var(--complete);  opacity: 0.7; stroke-width: 2.2; }
-    .edge-path.dimmed-edge     { opacity: 0.08; }
-
-    .edge-arrow {
-      fill: var(--border);
-      opacity: 0.45;
-      transition: fill 0.3s, opacity 0.3s;
-    }
-
-    .edge-arrow.ancestor-edge   { fill: var(--accent);   opacity: 0.9; }
-    .edge-arrow.descendant-edge { fill: var(--complete);  opacity: 0.7; }
-    .edge-arrow.dimmed-edge     { opacity: 0.08; }
-
-    /* --- Detail panel --- */
-    .detail-panel {
-      max-width: 700px;
-      margin: 0 auto;
-      background: var(--bg-surface);
-      border: 2px solid var(--border);
-      border-radius: 0;
-      padding: 28px 24px;
-      box-shadow: var(--shadow-hard);
-      display: none;
-      animation: panelSlideIn 0.35s ease;
-    }
-
-    .detail-panel.open { display: block; }
-
-    @keyframes panelSlideIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .detail-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .detail-phase-num {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    .detail-title {
-      font-family: var(--font-heading);
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .detail-status {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 3px 10px;
-      border-radius: 0;
-    }
-
-    .detail-status.complete    { background: rgba(90, 184, 143, 0.15); color: var(--complete); border: 1px solid var(--complete); }
-    .detail-status.in-progress { background: rgba(255, 107, 107, 0.15); color: var(--accent);   border: 1px solid var(--accent); }
-    .detail-status.planned     { background: rgba(128, 112, 96, 0.15);  color: var(--planned);  border: 1px solid var(--planned); }
-
-    .detail-desc {
-      color: var(--text-muted);
-      font-size: 1rem;
-      margin-bottom: 16px;
-    }
-
-    .detail-stats {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    .detail-stats strong { color: var(--text); }
-
-    .detail-sections {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .detail-section-title {
-      font-family: var(--font-heading);
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .detail-section-title .title-icon { margin-right: 4px; }
-
-    .detail-prereq-list,
-    .detail-unlock-list {
-      list-style: none;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .detail-prereq-list li,
-    .detail-unlock-list li {
-      font-family: var(--font-body);
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      padding: 6px 10px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .detail-prereq-list li:hover,
-    .detail-unlock-list li:hover {
-      border-color: var(--accent);
-      color: var(--text);
-    }
-
-    .detail-prereq-list li .li-num,
-    .detail-unlock-list li .li-num {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--accent);
-      margin-right: 6px;
-    }
-
-    .detail-empty {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    .detail-actions {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .detail-link {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      padding: 6px 14px;
-      border: 2px solid var(--border);
-      border-radius: 0;
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: border-color 0.2s, color 0.2s, transform 0.2s;
-    }
-
-    .detail-link:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      transform: translate(-1px, -1px);
-    }
-
-    .detail-link-read {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-      font-weight: 700;
-    }
-
-    .detail-link-read:hover {
-      background: var(--accent-hover);
-      color: #fff;
-      border-color: var(--accent-hover);
-    }
-
-    /* --- Responsive --- */
-    @media (max-width: 768px) {
-      .prereqs-page        { padding: 80px 0 48px; }
-      .graph-scroll-hint   { display: block; }
-      .detail-sections     { grid-template-columns: 1fr; gap: 14px; }
-      .detail-panel        { padding: 20px 16px; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css?v=20260809a">
+  <link rel="stylesheet" href="roadmap.css?v=20260808e">
 </head>
 <body>
-
   <a href="#main" class="skip-link">Skip to content</a>
 
   <header class="site-header">
@@ -405,7 +33,7 @@
       <nav class="header-nav">
         <a href="index.html#contents">Contents</a>
         <a href="catalog.html">Catalog</a>
-        <a href="prereqs.html">Roadmap</a>
+        <a href="prereqs.html" aria-current="page">Roadmap</a>
         <a href="glossary.html">Glossary</a>
         <a href="about.html">About</a>
         <a href="https://github.com/rohitg00/ai-engineering-from-scratch" target="_blank" rel="noopener" class="header-github">
@@ -414,47 +42,81 @@
           <span class="star-count" data-loading="true" aria-label="GitHub stars">…</span>
         </a>
       </nav>
-      <button class="search-toggle" type="button" data-cmd-palette
-        aria-label="Search (⌘K)" title="Search (⌘K)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <button class="search-toggle" type="button" data-cmd-palette aria-label="Search (⌘K)" title="Search (⌘K)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/>
           <line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
       </button>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
         <span class="theme-icon" id="themeIcon">N</span>
       </button>
     </div>
   </header>
 
-  <main class="prereqs-page" id="main">
-    <div class="container">
-      <div class="prereqs-header">
-        <h1>Roadmap</h1>
-        <p>Click any phase to see its prerequisites and what it unlocks downstream.</p>
+  <main class="roadmap-page" id="main">
+    <section class="roadmap-hero roadmap-container" aria-labelledby="roadmapTitle">
+      <div class="roadmap-hero-copy">
+        <span class="roadmap-eyebrow">Curriculum navigation</span>
+        <h1 id="roadmapTitle">From first principles to production AI.</h1>
+        <p class="roadmap-lede">Twenty connected phases form one top-to-bottom dependency graph. Follow the route downward, illuminate the prerequisites behind any phase, and continue exactly where your local progress left off.</p>
       </div>
+      <div class="roadmap-hero-stats" aria-label="Roadmap summary">
+        <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapPhaseCount">20</strong><span class="roadmap-hero-stat-label">Phases</span></div>
+        <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapLessonCount">503</strong><span class="roadmap-hero-stat-label">Lessons</span></div>
+        <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapProgressCount">0 / 503</strong><span class="roadmap-hero-stat-label">Your progress</span></div>
+        <div class="roadmap-hero-stat"><strong class="roadmap-hero-stat-value" id="roadmapNextPhase">Phase 00</strong><span class="roadmap-hero-stat-label">Recommended next</span></div>
+      </div>
+    </section>
 
-      <div class="prereqs-controls">
-        <div class="prereqs-legend">
-          <div class="legend-item"><span class="legend-dot complete"></span> Complete</div>
-          <div class="legend-item"><span class="legend-dot in-progress"></span> In Progress</div>
-          <div class="legend-item"><span class="legend-dot planned"></span> Planned</div>
+    <section class="roadmap-stage-index roadmap-container" aria-label="Roadmap stages">
+      <div class="roadmap-stage-index-copy">
+        <strong>Four graph zones</strong>
+        <span>Jump down the map</span>
+      </div>
+      <nav class="roadmap-stage-nav" id="roadmapStageNav" aria-label="Jump to a roadmap stage"></nav>
+    </section>
+
+    <section class="roadmap-workspace roadmap-container" aria-labelledby="learningMapTitle">
+      <div class="roadmap-board">
+        <div class="roadmap-toolbar">
+          <div class="roadmap-toolbar-copy">
+            <span class="roadmap-toolbar-label" id="learningMapTitle">Interactive learning map</span>
+            <p>Select a node to illuminate its route. Click the selected node or blank space to return to the full graph.</p>
+            <span class="roadmap-sr-only" id="roadmapKeyboardHelp">Use the arrow keys to move between phase nodes. Press Enter or Space to select a phase. Press Escape to clear the route.</span>
+          </div>
+          <div class="roadmap-toolbar-actions">
+            <label class="roadmap-jump-field">
+              <span class="roadmap-jump-label">Find a phase</span>
+              <select class="roadmap-jump-select" id="roadmapJump" aria-label="Jump to a phase"></select>
+            </label>
+            <div class="roadmap-zoom" aria-label="Graph zoom controls">
+              <button class="roadmap-zoom-button" id="roadmapZoomOut" type="button" aria-label="Zoom out">−</button>
+              <span class="roadmap-zoom-value" id="roadmapZoomValue" aria-live="polite">100%</span>
+              <button class="roadmap-zoom-button" id="roadmapZoomIn" type="button" aria-label="Zoom in">+</button>
+            </div>
+            <button class="roadmap-clear" id="roadmapClear" type="button" hidden>Back to full graph</button>
+          </div>
         </div>
-        <button class="reset-btn" id="resetBtn">&#10005; Clear selection</button>
-      </div>
-
-      <div class="graph-scroll-hint">&#8596; Scroll to explore the full graph</div>
-
-      <div class="graph-wrap">
-        <div class="graph-container" id="graphContainer">
-          <svg class="graph-svg" id="graphSvg"></svg>
+        <div class="roadmap-graph-shell">
+          <div class="roadmap-graph-wrap" id="roadmapGraphWrap" aria-label="Scrollable curriculum dependency graph">
+            <div class="roadmap-graph-container" id="roadmapGraphContainer">
+              <svg class="roadmap-graph-svg" id="roadmapGraph" role="group"></svg>
+            </div>
+          </div>
+          <div class="roadmap-graph-footer">
+            <div class="roadmap-graph-legend" aria-label="Focused route legend">
+              <span class="roadmap-legend-item"><span class="roadmap-legend-line"></span> Prerequisite route</span>
+              <span class="roadmap-legend-item"><span class="roadmap-legend-line is-unlock"></span> Downstream unlocks</span>
+            </div>
+            <span class="roadmap-graph-hint">Scroll down to follow the route · drag sideways across branches</span>
+          </div>
+          <span class="roadmap-sr-only" id="roadmapGraphStatus" role="status" aria-live="polite"></span>
         </div>
       </div>
 
-      <div class="detail-panel" id="detailPanel"></div>
-    </div>
+      <aside class="roadmap-inspector" id="roadmapInspector" aria-label="Selected phase details" aria-live="polite"></aside>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -465,16 +127,14 @@
         <a href="https://github.com/rohitg00/ai-engineering-from-scratch" target="_blank" rel="noopener">GitHub</a>
         <a href="catalog.html">Catalog</a>
         <a href="glossary.html">Glossary</a>
-              <a href="https://github.com/rohitg00/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report / Suggest</a>
+        <a href="https://github.com/rohitg00/ai-engineering-from-scratch/issues/new/choose" target="_blank" rel="noopener">Report / Suggest</a>
       </div>
     </div>
   </footer>
 
-  <script src="data.js?v=20260525a"></script>
-  <script src="progress.js?v=20260525a"></script>
+<!-- Fork overlay (personal/progress): progress-sync.js enables multi-device
+       progress tracking via progress.json. -->
   <script src="progress-sync.js?v=20260525a" defer></script>
-  <script src="header.js?v=20260525a" defer></script>
-  <script src="cmdpalette.js?v=20260525a" defer></script>
   <script>
   (function () {
     /* ===================================================
@@ -1069,6 +729,14 @@
     }
   })();
   </script>
+<!-- Fork overlay (personal/progress): progress-sync.js enables multi-device
+     progress tracking via progress.json. -->
+<script src="progress-sync.js?v=20260525a" defer></script>
+<script src="data.js?v=20260808g"></script>
+<script src="progress.js?v=20260801a"></script>
+<script src="header.js?v=20260808h" defer></script>
+<script src="cmdpalette.js?v=20260808h" defer></script>
+<script src="roadmap.js?v=20260808k" defer></script>
 <script defer src="https://va.vercel-scripts.com/v1/script.js"></script>
 </body>
 </html>
