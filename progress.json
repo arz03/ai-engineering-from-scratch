@@ -1,38 +1,7 @@
 {
   "schema": "aifs:progress:v1",
-  "exportedAt": "2026-08-18T16:00:04.766Z",
+  "exportedAt": "2026-08-19T07:22:16.139Z",
   "lessons": {
-    "phases/00-setup-and-tooling/02-git-and-collaboration": {
-      "answers": {
-        "pre-q0": {
-          "picked": 1,
-          "correct": true,
-          "t": 1786277615096
-        },
-        "pre-q1": {
-          "picked": 1,
-          "correct": true,
-          "t": 1786277635231
-        },
-        "post-q0": {
-          "picked": 2,
-          "correct": true,
-          "t": 1786277835074
-        },
-        "post-q1": {
-          "picked": 1,
-          "correct": true,
-          "t": 1786277846066
-        },
-        "post-q2": {
-          "picked": 1,
-          "correct": true,
-          "t": 1786277871074
-        }
-      },
-      "completedAt": 1786277871076,
-      "visitedAt": 1786279863377
-    },
     "phases/00-setup-and-tooling/01-dev-environment": {
       "answers": {
         "pre-q0": {
@@ -64,6 +33,37 @@
       "completedAt": 1784637220562,
       "visitedAt": 1786277539342
     },
+    "phases/00-setup-and-tooling/02-git-and-collaboration": {
+      "answers": {
+        "pre-q0": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277615096
+        },
+        "pre-q1": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277635231
+        },
+        "post-q0": {
+          "picked": 2,
+          "correct": true,
+          "t": 1786277835074
+        },
+        "post-q1": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277846066
+        },
+        "post-q2": {
+          "picked": 1,
+          "correct": true,
+          "t": 1786277871074
+        }
+      },
+      "completedAt": 1786277871076,
+      "visitedAt": 1786279863377
+    },
     "phases/00-setup-and-tooling/03-gpu-setup-and-cloud": {
       "answers": {
         "pre-q0": {
@@ -93,7 +93,7 @@
         }
       },
       "completedAt": null,
-      "visitedAt": 1787051333720
+      "visitedAt": 1787121865846
     },
     "phases/00-setup-and-tooling/04-apis-and-keys": {
       "answers": {
@@ -124,7 +124,7 @@
         }
       },
       "completedAt": null,
-      "visitedAt": 1787054120958
+      "visitedAt": 1787121898377
     },
     "phases/00-setup-and-tooling/05-jupyter-notebooks": {
       "answers": {
@@ -155,7 +155,7 @@
         }
       },
       "completedAt": 1787055586319,
-      "visitedAt": 1787054717854
+      "visitedAt": 1787121932758
     },
     "phases/00-setup-and-tooling/06-python-environments": {
       "answers": {
@@ -248,13 +248,44 @@
         }
       },
       "completedAt": 1787068540080,
-      "visitedAt": 1787068021266
+      "visitedAt": 1787121964246
     },
     "phases/00-setup-and-tooling/09-data-management": {
+      "answers": {
+        "pre-q0": {
+          "picked": 3,
+          "correct": true,
+          "t": 1787122129351
+        },
+        "pre-q1": {
+          "picked": 3,
+          "correct": true,
+          "t": 1787122139277
+        },
+        "post-q0": {
+          "picked": 2,
+          "correct": true,
+          "t": 1787123931881
+        },
+        "post-q1": {
+          "picked": 2,
+          "correct": true,
+          "t": 1787123942082
+        },
+        "post-q2": {
+          "picked": 0,
+          "correct": true,
+          "t": 1787123954617
+        }
+      },
+      "completedAt": 1787123954621,
+      "visitedAt": 1787121967527
+    },
+    "phases/00-setup-and-tooling/10-terminal-and-shell": {
       "answers": {},
       "completedAt": null,
-      "visitedAt": 1787068778749
+      "visitedAt": 1787124135185
     }
   },
-  "updatedAt": 1787068779087
+  "updatedAt": 1787124135288
 }
