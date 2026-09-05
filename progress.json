@@ -1,6 +1,6 @@
 {
   "schema": "aifs:progress:v1",
-  "exportedAt": "2026-08-19T08:14:10.859Z",
+  "exportedAt": "2026-09-05T16:16:00.464Z",
   "lessons": {
     "phases/00-setup-and-tooling/02-git-and-collaboration": {
       "answers": {
@@ -69,43 +69,43 @@
         "pre-q0": {
           "picked": 1,
           "correct": true,
-          "t": 1786278088149
+          "t": 1788618265242
         },
         "pre-q1": {
-          "picked": 1,
+          "picked": 2,
           "correct": true,
-          "t": 1786278103237
+          "t": 1788618260760
         },
         "post-q0": {
           "picked": 1,
           "correct": true,
-          "t": 1786278686998
+          "t": 1788618169081
         },
         "post-q1": {
           "picked": 1,
           "correct": true,
-          "t": 1786279466170
+          "t": 1788618183385
         },
         "post-q2": {
-          "picked": 3,
-          "correct": false,
-          "t": 1786279914833
+          "picked": 2,
+          "correct": true,
+          "t": 1788618187914
         }
       },
-      "completedAt": null,
-      "visitedAt": 1787125692697
+      "completedAt": 1788618265244,
+      "visitedAt": 1788618254471
     },
     "phases/00-setup-and-tooling/04-apis-and-keys": {
       "answers": {
         "pre-q0": {
-          "picked": 0,
-          "correct": false,
-          "t": 1786281424512
+          "picked": 1,
+          "correct": true,
+          "t": 1788618245338
         },
         "pre-q1": {
           "picked": 3,
           "correct": true,
-          "t": 1786281654575
+          "t": 1788618247081
         },
         "post-q0": {
           "picked": 0,
@@ -123,8 +123,8 @@
           "t": 1786283577049
         }
       },
-      "completedAt": null,
-      "visitedAt": 1787126444177
+      "completedAt": 1788618247082,
+      "visitedAt": 1788618225301
     },
     "phases/00-setup-and-tooling/05-jupyter-notebooks": {
       "answers": {
@@ -155,7 +155,7 @@
         }
       },
       "completedAt": 1787055586319,
-      "visitedAt": 1787121932758
+      "visitedAt": 1788618252840
     },
     "phases/00-setup-and-tooling/06-python-environments": {
       "answers": {
@@ -203,21 +203,21 @@
         "post-q0": {
           "picked": 3,
           "correct": true,
-          "t": 1787067644425
+          "t": 1788618291729
         },
         "post-q1": {
-          "picked": 3,
-          "correct": false,
-          "t": 1787067746071
+          "picked": 2,
+          "correct": true,
+          "t": 1788618304769
         },
         "post-q2": {
           "picked": 1,
           "correct": true,
-          "t": 1787067795031
+          "t": 1788618333697
         }
       },
-      "completedAt": null,
-      "visitedAt": 1787058286347
+      "completedAt": 1788618333699,
+      "visitedAt": 1788618268200
     },
     "phases/00-setup-and-tooling/08-editor-setup": {
       "answers": {
@@ -279,24 +279,44 @@
         }
       },
       "completedAt": 1787123954621,
-      "visitedAt": 1787121967527
+      "visitedAt": 1788617182721
     },
     "phases/00-setup-and-tooling/10-terminal-and-shell": {
       "answers": {
         "pre-q0": {
-          "picked": 0,
-          "correct": false,
-          "t": 1787127221866
+          "picked": 2,
+          "correct": true,
+          "t": 1788618370585
         },
         "pre-q1": {
           "picked": 2,
           "correct": true,
-          "t": 1787127250858
+          "t": 1788618386025
+        },
+        "post-q0": {
+          "picked": 2,
+          "correct": true,
+          "t": 1788621441325
+        },
+        "post-q1": {
+          "picked": 3,
+          "correct": true,
+          "t": 1788621464280
+        },
+        "post-q2": {
+          "picked": 0,
+          "correct": true,
+          "t": 1788621495833
         }
       },
+      "completedAt": 1788621495835,
+      "visitedAt": 1788619438473
+    },
+    "phases/00-setup-and-tooling/11-linux-for-ai": {
+      "answers": {},
       "completedAt": null,
-      "visitedAt": 1787127190104
+      "visitedAt": 1788621538319
     }
   },
-  "updatedAt": 1787127250858
+  "updatedAt": 1788621538816
 }
