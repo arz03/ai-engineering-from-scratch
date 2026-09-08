@@ -1,6 +1,6 @@
 {
   "schema": "aifs:progress:v1",
-  "exportedAt": "2026-09-05T16:16:00.464Z",
+  "exportedAt": "2026-09-08T08:36:34.947Z",
   "lessons": {
     "phases/00-setup-and-tooling/02-git-and-collaboration": {
       "answers": {
@@ -313,10 +313,73 @@
       "visitedAt": 1788619438473
     },
     "phases/00-setup-and-tooling/11-linux-for-ai": {
-      "answers": {},
+      "answers": {
+        "post-q0": {
+          "picked": 2,
+          "correct": true,
+          "t": 1788854461417
+        },
+        "post-q1": {
+          "picked": 2,
+          "correct": true,
+          "t": 1788854462608
+        },
+        "post-q2": {
+          "picked": 3,
+          "correct": true,
+          "t": 1788854463592
+        }
+      },
+      "completedAt": 1788854463594,
+      "visitedAt": 1788854285737
+    },
+    "phases/00-setup-and-tooling/12-debugging-and-profiling": {
+      "answers": {
+        "pre-q1": {
+          "picked": 0,
+          "correct": true,
+          "t": 1788854488081
+        },
+        "pre-q0": {
+          "picked": 2,
+          "correct": true,
+          "t": 1788854492994
+        },
+        "post-q2": {
+          "picked": 3,
+          "correct": true,
+          "t": 1788855597930
+        },
+        "post-q1": {
+          "picked": 2,
+          "correct": true,
+          "t": 1788855600177
+        },
+        "post-q0": {
+          "picked": 1,
+          "correct": true,
+          "t": 1788855602577
+        }
+      },
+      "completedAt": 1788855602580,
+      "visitedAt": 1788854480233
+    },
+    "phases/01-math-foundations/01-linear-algebra-intuition": {
+      "answers": {
+        "pre-q0": {
+          "picked": 1,
+          "correct": true,
+          "t": 1788856587481
+        },
+        "pre-q1": {
+          "picked": 3,
+          "correct": true,
+          "t": 1788856594945
+        }
+      },
       "completedAt": null,
-      "visitedAt": 1788621538319
+      "visitedAt": 1788855605680
     }
   },
-  "updatedAt": 1788621538816
+  "updatedAt": 1788856594945
 }
